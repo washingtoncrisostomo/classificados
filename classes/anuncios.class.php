@@ -1,12 +1,34 @@
 <?php
 class Anuncios
 {
-    public function getTotalAnuncios(){
+    public function getTotalAnuncios()
+    {
         global $pdo;
         $sql = $pdo->query("SELECT COUNT(*) as c FROM  anuncios");
-        $row=$sql->fetch();
+        $row = $sql->fetch();
 
         return $row['c'];
+    }
+
+    public function getUltimosAnuncios($page, $perPage){
+        global $pdo;
+
+        $offset = ($page-1) * $perPage;
+
+        $array = array();
+        $sql = $pdo->prepare("SELECT *,
+         (select anuncios_imagens.url from anuncios_imagens where anuncios_imagens
+         .id_anuncio = anuncios.id limit 1) as url,
+         (select categorias.nome from categorias where categorias
+         .id = anuncios.id_categoria) as categoria
+         FROM anuncios ORDER BY id DESC LIMIT $offset, $perPage");
+        $sql->execute();
+
+        if ($sql->rowCount() > 0) {
+            $array = $sql->fetchAll();
+        }
+
+        return $array;
     }
 
     public function getMeusAnuncios()
@@ -45,7 +67,7 @@ class Anuncios
             $sql->bindValue(":id_anuncio", $id);
             $sql->execute();
 
-            if($sql->rowCount()> 0){
+            if ($sql->rowCount() > 0) {
                 $array['fotos'] = $sql->fetchAll();
             }
         }
@@ -89,10 +111,10 @@ class Anuncios
             for ($q = 0; $q < count($fotos['tmp_name']); $q++) {
                 $tipo = $fotos['type'][$q];
                 if (in_array($tipo, array('image/jpeg', 'image/png'))) {
-                    $tmpname = md5(time().rand(0, 9999)).'.jpg';
-                    move_uploaded_file($fotos['tmp_name'][$q], 'assets/images/anuncios/'.$tmpname);
+                    $tmpname = md5(time() . rand(0, 9999)) . '.jpg';
+                    move_uploaded_file($fotos['tmp_name'][$q], 'assets/images/anuncios/' . $tmpname);
 
-                    list($width_orig, $height_orig) = getimagesize('assets/images/anuncios/'.$tmpname);
+                    list($width_orig, $height_orig) = getimagesize('assets/images/anuncios/' . $tmpname);
 
                     $ratio = $width_orig / $height_orig;
 
@@ -107,9 +129,9 @@ class Anuncios
 
                     $img = imagecreatetruecolor($width, $height);
                     if ($tipo == 'image/jpeg') {
-                        $origi = imagecreatefromjpeg('assets/images/anuncios/'.$tmpname);
+                        $origi = imagecreatefromjpeg('assets/images/anuncios/' . $tmpname);
                     } elseif ($tipo == 'image/png') {
-                        $origi = imagecreatefrompng('assets/images/anuncios/'.$tmpname);
+                        $origi = imagecreatefrompng('assets/images/anuncios/' . $tmpname);
                     }
 
                     imagecopyresampled($img, $origi, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
@@ -138,7 +160,8 @@ class Anuncios
         $sql->execute();
     }
 
-    public function excluirFoto($id){
+    public function excluirFoto($id)
+    {
         global $pdo;
 
         $id_anuncio = 0;
@@ -147,7 +170,7 @@ class Anuncios
         $sql->bindValue(":id", $id);
         $sql->execute();
 
-        if($sql->rowCount()>0) {
+        if ($sql->rowCount() > 0) {
             $row = $sql->fetch();
             $id_anuncio = $row['id_anuncio'];
         }
