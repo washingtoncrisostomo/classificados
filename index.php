@@ -1,9 +1,17 @@
 <?php require 'pages/header.php'; ?>
 
+<?php
+    require 'classes/anuncios.class.php';
+    $a = new Anuncios();
+    $total_anuncios = $a->getTotalAnuncios();
+    $total_usuarios = $a->getTotalUsuarios();
+?>
+
 <div class="container-fluid">
     <div class="jumbotron">
-        <h2>Nós temos hoje 999 anúncios.</h2>
-        <p>E mais de 999 usuários cadastrados.</p>
+
+        <h2>Nós temos hoje <?php echo $total_anuncios; ?> anúncios.</h2>
+        <p>E mais de <?php echo $total_usuarios; ?> usuários cadastrados.</p>
     </div>
 
     <div class="row">
