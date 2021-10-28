@@ -2,9 +2,11 @@
 
 <?php
     require 'classes/anuncios.class.php';
+    require 'classes/usuarios.class.php';
     $a = new Anuncios();
+    $u = new Usuarios();
     $total_anuncios = $a->getTotalAnuncios();
-    $total_usuarios = $a->getTotalUsuarios();
+    $total_usuarios = $u->getTotalUsuarios();
 ?>
 
 <div class="container-fluid">

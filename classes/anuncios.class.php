@@ -9,14 +9,6 @@ class Anuncios
         return $row['c'];
     }
 
-    public function getTotalUsuarios(){
-        global $pdo;
-        $sql = $pdo->query("SELECT COUNT(*) as c FROM  usuarios");
-        $row=$sql->fetch();
-
-        return $row['c'];
-    }
-
     public function getMeusAnuncios()
     {
         global $pdo;
