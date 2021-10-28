@@ -17,8 +17,13 @@ if (isset($_POST['titulo']) && !empty($_POST['titulo'])) {
     $valor = addslashes($_POST['valor']);
     $descicao = addslashes($_POST['descricao']);
     $estado = addslashes($_POST['estado']);
+    if (isset($_FILES['fotos'])) {
+        $fotos = $_FILES['fotos'];
+    }else{
+        $fotos = array();
+    }
 
-    $a->editAnuncio($titulo, $categoria, $valor, $descicao, $estado, $_GET['id']);
+    $a->editAnuncio($titulo, $categoria, $valor, $descicao, $estado, $fotos, $_GET['id']);
 ?>
     <div class="alert alert-success">Produto editado com sucesso!</div>
 <?php
@@ -47,9 +52,9 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                 require 'classes/categorias.class.php';
                 $c = new Categorias();
                 $cats = $c->getLista();
-                foreach ($cats as $cat):
+                foreach ($cats as $cat) :
                 ?>
-                    <option value="<?php echo $cat['id']; ?>" <?php echo ($info['id_categoria']==$cat['id'])?'selected="selected"':''; ?>><?php echo $cat['nome']; ?></option>
+                    <option value="<?php echo $cat['id']; ?>" <?php echo ($info['id_categoria'] == $cat['id']) ? 'selected="selected"' : ''; ?>><?php echo $cat['nome']; ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
@@ -70,10 +75,22 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         <div class="form-group">
             <label for="estado">Estado de Conservação:</label>
             <select name="estado" id="estado" class="form-control">
-                <option value="0" <?php echo ($info['estado']=='0')?'selected="selected"':''; ?>>Ruim</option>
-                <option value="1" <?php echo ($info['estado']=='1')?'selected="selected"':''; ?>>Bom</option>
-                <option value="2" <?php echo ($info['estado']=='2')?'selected="selected"':''; ?>>Ótimo</option>
+                <option value="0" <?php echo ($info['estado'] == '0') ? 'selected="selected"' : ''; ?>>Ruim</option>
+                <option value="1" <?php echo ($info['estado'] == '1') ? 'selected="selected"' : ''; ?>>Bom</option>
+                <option value="2" <?php echo ($info['estado'] == '2') ? 'selected="selected"' : ''; ?>>Ótimo</option>
             </select>
+        </div>
+
+        <div class="form-group">
+            <label for="add_foto">Fotos do anúncio:</label>
+            <input type="file" name="fotos[]" multiple /><br />
+
+            <div class="panel panel-default">
+                <div class="panel-heading">Fotos do Anúncio</div>
+                <div class="panel-body">
+
+                </div>
+            </div>
         </div>
         <input type="submit" value="Salvar" class="btn btn-default">
     </form>
